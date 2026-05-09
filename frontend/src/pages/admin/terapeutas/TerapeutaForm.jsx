@@ -1,147 +1,154 @@
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   getTerapeutaById,
   createTerapeuta,
   updateTerapeuta,
   getEstados,
-  getCidadesPorEstado
-} from '../../../services/api'
-import './TerapeutaForm.css'
+  getCidadesPorEstado,
+} from "../../../services/api";
+import "./TerapeutaForm.css";
 
 const DIAS = [
-  { valor: 'monday', label: 'Segunda' },
-  { valor: 'tuesday', label: 'Terça' },
-  { valor: 'wednesday', label: 'Quarta' },
-  { valor: 'thursday', label: 'Quinta' },
-  { valor: 'friday', label: 'Sexta' },
-  { valor: 'saturday', label: 'Sábado' },
-]
+  { valor: "monday", label: "Segunda" },
+  { valor: "tuesday", label: "Terça" },
+  { valor: "wednesday", label: "Quarta" },
+  { valor: "thursday", label: "Quinta" },
+  { valor: "friday", label: "Sexta" },
+  { valor: "saturday", label: "Sábado" },
+];
 
 const HORARIOS = [
-  '08:00', '09:00', '10:00', '11:00',
-  '13:00', '14:00', '15:00', '16:00', '17:00'
-]
+  "08:00",
+  "09:00",
+  "10:00",
+  "11:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
+];
 
 const FORM_INICIAL = {
-  nome: '',
-  especialidade: '',
-  crp: '',
-  descricao: '',
-  foto: '',
-  avaliacao: '',
-  consultas: '',
+  nome: "",
+  especialidade: "",
+  crp: "",
+  descricao: "",
+  foto: "",
+  telefone: "",
+  avaliacao: "",
+  consultas: "",
   disponivel: true,
-  estado: '',
-  cidade: '',
+  estado: "",
+  cidade: "",
   diasDisponiveis: [],
-  horarios: []
-}
+  horarios: [],
+};
 
 function TerapeutaForm() {
-  const [form, setForm] = useState(FORM_INICIAL)
-  const [estados, setEstados] = useState([])
-  const [cidades, setCidades] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [erro, setErro] = useState('')
-  const navigate = useNavigate()
-  const { id } = useParams()
-  const token = localStorage.getItem('token')
-  const isEdicao = !!id
+  const [form, setForm] = useState(FORM_INICIAL);
+  const [estados, setEstados] = useState([]);
+  const [cidades, setCidades] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState("");
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const token = localStorage.getItem("token");
+  const isEdicao = !!id;
 
   // Carrega estados do IBGE
   useEffect(() => {
     async function carregarEstados() {
-      const dados = await getEstados()
-      setEstados(dados)
+      const dados = await getEstados();
+      setEstados(dados);
     }
-    carregarEstados()
-  }, [])
+    carregarEstados();
+  }, []);
 
   // Se for edição, carrega os dados do terapeuta
   useEffect(() => {
-    if (!isEdicao) return
+    if (!isEdicao) return;
 
     async function carregarTerapeuta() {
-      const dados = await getTerapeutaById(id)
-      setForm(dados)
+      const dados = await getTerapeutaById(id);
+      setForm(dados);
 
       // Carrega cidades do estado já salvo
       if (dados.estado) {
-        const cidades = await getCidadesPorEstado(dados.estado)
-        setCidades(cidades)
+        const cidades = await getCidadesPorEstado(dados.estado);
+        setCidades(cidades);
       }
     }
-    carregarTerapeuta()
-  }, [id, isEdicao])
+    carregarTerapeuta();
+  }, [id, isEdicao]);
 
   // Carrega cidades quando estado muda
   useEffect(() => {
-    if (!form.estado) return
+    if (!form.estado) return;
 
     async function carregarCidades() {
-      const dados = await getCidadesPorEstado(form.estado)
-      setCidades(dados)
+      const dados = await getCidadesPorEstado(form.estado);
+      setCidades(dados);
     }
-    carregarCidades()
-  }, [form.estado])
+    carregarCidades();
+  }, [form.estado]);
 
   function handleChange(e) {
-    const { name, value, type, checked } = e.target
-    setForm(prev => ({
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }))
+      [name]: type === "checkbox" ? checked : value,
+    }));
   }
 
   function handleCheckboxLista(campo, valor) {
-    setForm(prev => {
-      const lista = prev[campo]
-      const jaTemn = lista.includes(valor)
+    setForm((prev) => {
+      const lista = prev[campo];
+      const jaTemn = lista.includes(valor);
       return {
         ...prev,
         [campo]: jaTemn
-          ? lista.filter(item => item !== valor)
-          : [...lista, valor]
-      }
-    })
+          ? lista.filter((item) => item !== valor)
+          : [...lista, valor],
+      };
+    });
   }
 
   async function handleSubmit(e) {
-    e.preventDefault()
-    setErro('')
-    setLoading(true)
+    e.preventDefault();
+    setErro("");
+    setLoading(true);
 
     const dados = {
       ...form,
       avaliacao: Number(form.avaliacao),
-      consultas: Number(form.consultas)
-    }
+      consultas: Number(form.consultas),
+    };
 
     const resposta = isEdicao
       ? await updateTerapeuta(id, dados, token)
-      : await createTerapeuta(dados, token)
+      : await createTerapeuta(dados, token);
 
     if (resposta.message && !resposta.id) {
-      setErro(resposta.message)
-      setLoading(false)
-      return
+      setErro(resposta.message);
+      setLoading(false);
+      return;
     }
 
-    navigate('/admin')
+    navigate("/admin");
   }
 
   return (
     <div className="form-container">
       <header className="form-header">
-        <button className="btn-voltar" onClick={() => navigate('/admin')}>
+        <button className="btn-voltar" onClick={() => navigate("/admin")}>
           ← Voltar
         </button>
-        <h1>{isEdicao ? 'Editar Terapeuta' : 'Novo Terapeuta'}</h1>
+        <h1>{isEdicao ? "Editar Terapeuta" : "Novo Terapeuta"}</h1>
       </header>
 
       <form className="form" onSubmit={handleSubmit}>
-
         {/* Dados básicos */}
         <section className="form-secao">
           <h2 className="form-secao-titulo">Dados básicos</h2>
@@ -205,6 +212,17 @@ function TerapeutaForm() {
             />
           </div>
 
+          <div className="form-campo">
+            <label>Telefone (WhatsApp)</label>
+            <input
+              type="text"
+              name="telefone"
+              value={form.telefone}
+              onChange={handleChange}
+              placeholder="11999999999"
+            />
+          </div>
+
           <div className="form-linha">
             <div className="form-campo">
               <label>Avaliação</label>
@@ -257,7 +275,7 @@ function TerapeutaForm() {
               required
             >
               <option value="">Selecione o estado</option>
-              {estados.map(e => (
+              {estados.map((e) => (
                 <option key={e.id} value={e.sigla}>
                   {e.nome}
                 </option>
@@ -275,9 +293,11 @@ function TerapeutaForm() {
               required
             >
               <option value="">
-                {form.estado ? 'Selecione a cidade' : 'Selecione o estado primeiro'}
+                {form.estado
+                  ? "Selecione a cidade"
+                  : "Selecione o estado primeiro"}
               </option>
-              {cidades.map(c => (
+              {cidades.map((c) => (
                 <option key={c.id} value={c.nome}>
                   {c.nome}
                 </option>
@@ -290,12 +310,14 @@ function TerapeutaForm() {
         <section className="form-secao">
           <h2 className="form-secao-titulo">Dias disponíveis</h2>
           <div className="form-checkboxes">
-            {DIAS.map(dia => (
+            {DIAS.map((dia) => (
               <label key={dia.valor} className="form-check">
                 <input
                   type="checkbox"
                   checked={form.diasDisponiveis.includes(dia.valor)}
-                  onChange={() => handleCheckboxLista('diasDisponiveis', dia.valor)}
+                  onChange={() =>
+                    handleCheckboxLista("diasDisponiveis", dia.valor)
+                  }
                 />
                 {dia.label}
               </label>
@@ -307,12 +329,12 @@ function TerapeutaForm() {
         <section className="form-secao">
           <h2 className="form-secao-titulo">Horários disponíveis</h2>
           <div className="form-checkboxes">
-            {HORARIOS.map(horario => (
+            {HORARIOS.map((horario) => (
               <label key={horario} className="form-check">
                 <input
                   type="checkbox"
                   checked={form.horarios.includes(horario)}
-                  onChange={() => handleCheckboxLista('horarios', horario)}
+                  onChange={() => handleCheckboxLista("horarios", horario)}
                 />
                 {horario}
               </label>
@@ -323,12 +345,15 @@ function TerapeutaForm() {
         {erro && <p className="form-erro">{erro}</p>}
 
         <button type="submit" className="btn-salvar" disabled={loading}>
-          {loading ? 'Salvando...' : isEdicao ? 'Salvar alterações' : 'Cadastrar terapeuta'}
+          {loading
+            ? "Salvando..."
+            : isEdicao
+              ? "Salvar alterações"
+              : "Cadastrar terapeuta"}
         </button>
-
       </form>
     </div>
-  )
+  );
 }
 
 export default TerapeutaForm;

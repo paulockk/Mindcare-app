@@ -22,6 +22,7 @@ model Terapeuta {
   crp              String         @unique
   descricao        String
   foto             String?
+  telefone  String?
   avaliacao        Float          @default(0)
   consultas        Int            @default(0)
   disponivel       Boolean        @default(true)
