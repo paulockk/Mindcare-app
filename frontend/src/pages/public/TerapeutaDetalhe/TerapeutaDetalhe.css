@@ -108,6 +108,26 @@
   margin: 0;
 }
 
+.td-btn-whatsapp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #2d6a4f;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  width: 100%;
+  transition: background 0.2s;
+}
+
+.td-btn-whatsapp:hover {
+  background: #1b4332;
+}
+
 /* Nav sidebar */
 .td-nav {
   display: flex;

@@ -352,6 +352,18 @@ function TerapeutaDetalhe() {
                   <p>
                     {formatarData(diaSelecionado)} às {horarioSelecionado}
                   </p>
+                  {terapeuta.telefone && (
+                    <a
+                      className="td-btn-whatsapp"
+                      href={`https://wa.me/55${terapeuta.telefone.replace(/\D/g, "")}?text=${encodeURIComponent(
+                        `Olá ${terapeuta.nome}! Agendei uma consulta para ${formatarData(diaSelecionado)} às ${horarioSelecionado}. Meu nome é ${form.nome}.`,
+                      )}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Confirmar pelo WhatsApp
+                    </a>
+                  )}
                   <button
                     className="td-btn-primary"
                     onClick={() => navigate("/")}
