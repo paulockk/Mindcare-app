@@ -113,7 +113,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background: #2d6a4f;
+  background: #25d366;
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -125,7 +125,7 @@
 }
 
 .td-btn-whatsapp:hover {
-  background: #1b4332;
+  background: #1ebe57;
 }
 
 /* Nav sidebar */
