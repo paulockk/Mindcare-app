@@ -361,15 +361,15 @@ function TerapeutaDetalhe() {
                       target="_blank"
                       rel="noreferrer"
                     >
-                      Confirmar pelo WhatsApp
+                      <Phone /> Confirmar pelo WhatsApp
                     </a>
                   )}
-                  <button
+                  {/* <button
                     className="td-btn-primary"
                     onClick={() => navigate("/")}
                   >
                     Voltar ao início
-                  </button>
+                  </button> */}
                 </div>
               )}
             </section>
