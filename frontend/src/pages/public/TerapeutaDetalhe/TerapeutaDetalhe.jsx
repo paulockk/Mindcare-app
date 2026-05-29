@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   Map,
 } from "lucide-react";
+import { useSwipeable } from "react-swipeable";
 
 const DIAS_SEMANA = {
   monday: "Seg",
@@ -24,6 +25,8 @@ const DIAS_SEMANA = {
   friday: "Sex",
   saturday: "Sáb",
 };
+
+const SECOES = ["agendar", "sobre", "localizacao", "avaliacoes"];
 
 function gerarProximosDias(diasDisponiveis, quantidade = 14) {
   const dias = [];
@@ -140,6 +143,23 @@ function TerapeutaDetalhe() {
     setEnviando(false);
   }
 
+  const handlers = useSwipeable({
+    onSwipedLeft: () => {
+      const atual = SECOES.indexOf(secaoAtiva);
+      if (atual < SECOES.length - 1) {
+        setSecaoAtiva(SECOES[atual + 1]);
+      }
+    },
+    onSwipedRight: () => {
+      const atual = SECOES.indexOf(secaoAtiva);
+      if (atual > 0) {
+        setSecaoAtiva(SECOES[atual - 1]);
+      }
+    },
+    preventScrollOnSwipe: true,
+    trackMouse: false,
+  });
+
   if (loading) return <p className="td-loading">Carregando...</p>;
   if (!terapeuta)
     return <p className="td-loading">Terapeuta não encontrado.</p>;
@@ -213,10 +233,18 @@ function TerapeutaDetalhe() {
               </button>
             ))}
           </nav>
+          <div className="td-dots">
+            {SECOES.map((s) => (
+              <span
+                key={s}
+                className={`td-dot ${secaoAtiva === s ? "ativo" : ""}`}
+              />
+            ))}
+          </div>
         </aside>
 
         {/* Conteúdo principal */}
-        <main className="td-main">
+        <main className="td-main" {...handlers}>
           {/* Agendar */}
           {secaoAtiva === "agendar" && (
             <section className="td-secao">
