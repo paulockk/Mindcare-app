@@ -512,6 +512,31 @@
   line-height: 1.5;
 }
 
+.td-dots {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.td-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ddd;
+  transition: background 0.2s;
+}
+
+.td-dot.ativo {
+  background: #2d6a4f;
+}
+
+@media (min-width: 768px) {
+  .td-dots {
+    display: none;
+  }
+}
+
 /* Tablet e Desktop */
 @media (min-width: 768px) {
   .td-layout {
